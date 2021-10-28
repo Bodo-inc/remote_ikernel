@@ -262,8 +262,7 @@ def add_kernel(interface, name, kernel_cmd, cpus=1, pe=None, language=None,
         username = False
     else:
         username = getpass.getuser()
-    
-    print("kernel_json: ", kernel_json)
+
 
     # kernel.json file installation
     with tempdir.TemporaryDirectory() as temp_dir:
