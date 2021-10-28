@@ -352,7 +352,8 @@ def manage():
     parser.add_argument('--kerneldir', help="Directory in which to create "
                         "kernel.json files on the host. If not specified it "
                         "will use the workdir (if specified) or the current "
-                        "directory (in that order).")
+                        "directory (in that order). Please provide an absolute "
+                        "path.")
     parser.add_argument('--verbose', '-v', action='store_true', help="Running "
                         "kernel will produce verbose debugging on the console.")
     parser.add_argument('--version', '-V', action='version',
