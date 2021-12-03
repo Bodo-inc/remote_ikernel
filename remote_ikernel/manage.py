@@ -141,7 +141,7 @@ def show_kernel(kernel_name):
 def add_kernel(interface, name, kernel_cmd, cpus=1, pe=None, language=None,
                system=False, workdir=None, host=None, precmd=None,
                launch_args=None, tunnel_hosts=None, verbose=False,
-               launch_cmd=None, kerneldir=None):
+               launch_cmd=None, kerneldir=None, dryrun=False):
     """
     Add a kernel. Generates a kernel.json and installs it for the system or
     user.
@@ -263,16 +263,16 @@ def add_kernel(interface, name, kernel_cmd, cpus=1, pe=None, language=None,
     else:
         username = getpass.getuser()
 
+    if not dryrun:
+        # kernel.json file installation
+        with tempdir.TemporaryDirectory() as temp_dir:
+            os.chmod(temp_dir, 0o755)  # Starts off as 700, not user readable
 
-    # kernel.json file installation
-    with tempdir.TemporaryDirectory() as temp_dir:
-        os.chmod(temp_dir, 0o755)  # Starts off as 700, not user readable
+            with open(path.join(temp_dir, 'kernel.json'), 'w') as kernel_file:
+                json.dump(kernel_json, kernel_file, sort_keys=True, indent=2)
 
-        with open(path.join(temp_dir, 'kernel.json'), 'w') as kernel_file:
-            json.dump(kernel_json, kernel_file, sort_keys=True, indent=2)
-
-        ks.install_kernel_spec(temp_dir, kernel_name,
-                               user=username, replace=True)
+            ks.install_kernel_spec(temp_dir, kernel_name,
+                                user=username, replace=True)
 
     return kernel_name, " ".join(display_name)
 
