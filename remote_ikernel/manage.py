@@ -48,6 +48,28 @@ if sys.stdout.encoding is None:
     argparse.ArgumentParser._print_message = _print_message
 
 
+def kernel_exists(kernel_name):
+    """
+    Checks if a kernel already exists.
+
+    Parameters
+    ----------
+    kernel_name : str
+        The name of the kernel to check existence of
+
+    Returns
+    -------
+    exists : boolean
+        Boolean indicating whether a kernel with this name exists
+    """
+    try:
+        _ = ks.get_kernel_spec(kernel_name)
+    except:
+        return False
+    else:
+        return True
+
+
 def delete_kernel(kernel_name):
     """
     Delete the kernel by removing the kernel.json and directory.
