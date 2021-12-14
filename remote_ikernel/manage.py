@@ -299,6 +299,18 @@ def add_kernel(interface, name, kernel_cmd, cpus=1, pe=None, language=None,
     return kernel_name, " ".join(display_name)
 
 
+def get_existing_kernels():
+    """
+    Get a list of existing remote ipython kernels in kernelspecs
+
+    Returns
+    -------
+    existing_kernels : list
+        List of existing remote ipython kernels in kernelspecs
+    """
+    return list(filter(lambda x: x.startswith(RIK_PREFIX), ks.find_kernel_specs().keys()))
+
+
 def manage():
     """
     Manage the available remote_ikernels.
