@@ -5,5 +5,8 @@ Run kernels remotely for IPython/Jupyter notebooks.
 
 """
 
-__version__ = '0.4.6'
-RIK_PREFIX = 'rik_'
+RIK_PREFIX = "rik_"
+
+from . import _version
+
+__version__ = _version.get_versions()["version"]
