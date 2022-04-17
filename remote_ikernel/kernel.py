@@ -229,6 +229,7 @@ class RemoteIKernel(object):
         # this will start a pexpect, so we must check if
         # self.connection exists when launching the interface
         if self.tunnel_hosts is not None:
+            self.log.info("Launching tunnel hosts...")
             self.launch_tunnel_hosts()
 
         if self.interface == "local":
@@ -445,6 +446,7 @@ class RemoteIKernel(object):
         """
         Start the kernel on the remote machine.
         """
+        self.log.debug("In start_kernel...")
         conn = self.connection
         # If the remote system has a different filesystem, a temporary
         # file is needed to hold the json.
@@ -466,13 +468,20 @@ class RemoteIKernel(object):
 
         # Create a temporary file to store a copy of the connection information
         # Delete the file if it already exists
+        self.log.debug(
+            "Sending command to delete kernel file on host if it already exists..."
+        )
         conn.sendline("rm -f {0}".format(kernel_name))
         file_contents = json.dumps(self.connection_info)
+        self.log.debug(
+            "Sending command to create kernel file with connection info on host..."
+        )
         conn.sendline("echo '{0}' > {1}".format(file_contents, kernel_name))
 
         # Is this the best place for a pre-command? I guess people will just
         # have to deal with it. Pass it on as is.
         if self.precmd:
+            self.log.debug(f"Sending precmd ({self.precmd}) to host...")
             conn.sendline(self.precmd)
 
         # Init as a background process so we can delete the tempfile after
@@ -487,16 +496,21 @@ class RemoteIKernel(object):
         # transient file for once the process stops. Trying to do this
         # whilst simultaneously starting the kernel ended up deleting
         # the file before it was read.
+        self.log.debug("Queuing deletetion of kernel file...")
         conn.sendline("rm -f {0}".format(kernel_name))
+        self.log.debug("Running exit on host...")
         conn.sendline("exit")
 
         # Could check this for errors?
+        self.log.debug("Running exit on host again...")
         conn.expect("exit")
+        self.log.debug("Exiting start_kernel...")
 
     def tunnel_connection(self):
         """
         Set up tunnels to the node using the connection information.
         """
+        self.log.debug("In tunnel_connection...")
         # Auto accept ssh keys so tunnels work on previously unknown hosts.
         # This might need to change, but the other option is to get user or
         # admin to turn StrictHostKeyChecking off in .ssh/ssh_config for this
@@ -513,15 +527,20 @@ class RemoteIKernel(object):
         else:
             launch_args = ""
 
+        self.log.debug("Creating pexpect.spawn and sending 'exit'...")
         pexpect.spawn(
             "{pre} ssh -o StrictHostKeyChecking=no {args}"
             "{host}".format(pre=pre, args=launch_args, host=host).strip(),
             logfile=self.log,
+            timeout=600,
         ).sendline("exit")
 
         # connection info should have the ports being used
         tunnel_command = self.tunnel_cmd.format(**self.connection_info)
-        tunnel = pexpect.spawn(tunnel_command, logfile=self.log)
+        self.log.debug(
+            f"Creating tunnel using pexpect.spawn. tunnel_command: {tunnel_command}"
+        )
+        tunnel = pexpect.spawn(tunnel_command, logfile=self.log, timeout=600)
         check_password(tunnel)
 
         self.log.info(
@@ -554,6 +573,7 @@ class RemoteIKernel(object):
         to the kernel. The timeout determines how often the ssh tunnels are
         checked.
         """
+        self.log.info(f"Starting keep_alive. timeout: {timeout}")
         # The timeout determines how long each loop will be,
         # if an ssh tunnel dies, this is how long it will be
         # before it is revived.
@@ -606,9 +626,12 @@ class RemoteIKernel(object):
         connection : pexpect.spawn
             The connection object. This is also attached to the class.
         """
+        self.log.info(f"_spawn. command: {command} ; timeout: {timeout}")
         if self.connection is None:
+            self.log.debug("self.connection is None. Starting pexpect.spawn...")
             self.connection = pexpect.spawn(command, timeout=timeout, logfile=self.log)
         else:
+            self.log.debug("self.connection is not None. Sending line...")
             self.connection.sendline(command)
 
         return self.connection
