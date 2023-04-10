@@ -170,6 +170,8 @@ def show_kernel(kernel_name):
 def add_kernel(
     interface,
     name,
+    cluster_name,
+    cluster_uuid,
     kernel_cmd,
     cpus=1,
     pe=None,
@@ -191,33 +193,33 @@ def add_kernel(
     user.
     """
     kernel_name = []
-    display_name = []
+    display_name = cluster_name + "_" + cluster_uuid[:5]
     argv = [sys.executable, "-m", "remote_ikernel"]
 
     # How to connect to kernel
     if interface == "local":
         argv.extend(["--interface", "local"])
         kernel_name.append("local")
-        display_name.append("Local")
+        # display_name.append("Local")
     elif interface == "pbs":
         argv.extend(["--interface", "pbs"])
-        display_name.append("PBS")
+        # display_name.append("PBS")
     elif interface == "sge":
         argv.extend(["--interface", "sge"])
         kernel_name.append("sge")
-        display_name.append("GridEngine")
+        # display_name.append("GridEngine")
     elif interface == "sge_qrsh":
         argv.extend(["--interface", "sge_qrsh"])
         kernel_name.append("sge_qrsh")
-        display_name.append("GridEngine (qrsh)")
+        # display_name.append("GridEngine (qrsh)")
     elif interface == "slurm":
         argv.extend(["--interface", "slurm"])
         kernel_name.append("slurm")
-        display_name.append("SLURM")
+        # display_name.append("SLURM")
     elif interface == "lsf":
         argv.extend(["--interface", "lsf"])
         kernel_name.append("lsf")
-        display_name.append("Platform LSF")
+        # display_name.append("Platform LSF")
     elif interface == "ssh":
         if host is None:
             raise KeyError("A host is required for ssh.")
@@ -225,8 +227,8 @@ def add_kernel(
         argv.extend(["--host", host])
         kernel_name.append("ssh")
         kernel_name.append(host)
-        display_name.append("SSH")
-        display_name.append(host)
+        # display_name.append("SSH")
+        # display_name.append(host)
     elif interface is None:
         raise ValueError("interface must be specified")
     else:
@@ -234,23 +236,23 @@ def add_kernel(
 
     if name is None:
         raise ValueError("name is required for kernel")
-    display_name.append(name)
+    # display_name.append(name)
     kernel_name.append(re.sub(r"\W", "", name).lower())
 
     if launch_cmd is not None:
         argv.extend(["--launch-cmd", launch_cmd])
-        display_name.append("({0})".format(launch_cmd))
+        # display_name.append("({0})".format(launch_cmd))
         kernel_name.append(re.sub(r"\W", "", launch_cmd).lower())
 
     if pe is not None:
         argv.extend(["--pe", pe])
         kernel_name.append(pe)
-        display_name.append(pe)
+        # display_name.append(pe)
 
     if cpus and cpus > 1:
         argv.extend(["--cpus", "{0}".format(cpus)])
         kernel_name.append("{0}".format(cpus))
-        display_name.append("{0} CPUs".format(cpus))
+        # display_name.append("{0} CPUs".format(cpus))
 
     if workdir is not None:
         argv.extend(["--workdir", workdir])
@@ -267,7 +269,7 @@ def add_kernel(
     if tunnel_hosts:
         # This will be a list of hosts
         kernel_name.append("via_{0}".format("_".join(tunnel_hosts)))
-        display_name.append("(via {0})".format(" ".join(tunnel_hosts)))
+        # display_name.append("(via {0})".format(" ".join(tunnel_hosts)))
         argv.extend(["--tunnel-hosts"] + tunnel_hosts)
 
     if verbose:
@@ -289,7 +291,7 @@ def add_kernel(
     # so get rid of evrything just in case.
     kernel_name = re.sub(r"\W", "_", kernel_name)
     kernel_json = {
-        "display_name": " ".join(display_name),
+        "display_name": display_name,
         "argv": argv,
     }
 
@@ -320,7 +322,7 @@ def add_kernel(
 
             ks.install_kernel_spec(temp_dir, kernel_name, user=username, replace=True)
 
-    return kernel_name, " ".join(display_name)
+    return kernel_name, display_name
 
 
 def get_existing_kernel_specs():
