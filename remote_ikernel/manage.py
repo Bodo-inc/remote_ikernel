@@ -193,33 +193,27 @@ def add_kernel(
     user.
     """
     kernel_name = []
-    display_name = cluster_name + "_" + cluster_uuid[:5]
+    display_name = f"{cluster_name} (ID: {cluster_uuid})"
     argv = [sys.executable, "-m", "remote_ikernel"]
 
     # How to connect to kernel
     if interface == "local":
         argv.extend(["--interface", "local"])
         kernel_name.append("local")
-        # display_name.append("Local")
     elif interface == "pbs":
         argv.extend(["--interface", "pbs"])
-        # display_name.append("PBS")
     elif interface == "sge":
         argv.extend(["--interface", "sge"])
         kernel_name.append("sge")
-        # display_name.append("GridEngine")
     elif interface == "sge_qrsh":
         argv.extend(["--interface", "sge_qrsh"])
         kernel_name.append("sge_qrsh")
-        # display_name.append("GridEngine (qrsh)")
     elif interface == "slurm":
         argv.extend(["--interface", "slurm"])
         kernel_name.append("slurm")
-        # display_name.append("SLURM")
     elif interface == "lsf":
         argv.extend(["--interface", "lsf"])
         kernel_name.append("lsf")
-        # display_name.append("Platform LSF")
     elif interface == "ssh":
         if host is None:
             raise KeyError("A host is required for ssh.")
@@ -227,8 +221,6 @@ def add_kernel(
         argv.extend(["--host", host])
         kernel_name.append("ssh")
         kernel_name.append(host)
-        # display_name.append("SSH")
-        # display_name.append(host)
     elif interface is None:
         raise ValueError("interface must be specified")
     else:
