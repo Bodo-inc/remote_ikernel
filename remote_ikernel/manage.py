@@ -228,23 +228,19 @@ def add_kernel(
 
     if name is None:
         raise ValueError("name is required for kernel")
-    # display_name.append(name)
     kernel_name.append(re.sub(r"\W", "", name).lower())
 
     if launch_cmd is not None:
         argv.extend(["--launch-cmd", launch_cmd])
-        # display_name.append("({0})".format(launch_cmd))
         kernel_name.append(re.sub(r"\W", "", launch_cmd).lower())
 
     if pe is not None:
         argv.extend(["--pe", pe])
         kernel_name.append(pe)
-        # display_name.append(pe)
 
     if cpus and cpus > 1:
         argv.extend(["--cpus", "{0}".format(cpus)])
         kernel_name.append("{0}".format(cpus))
-        # display_name.append("{0} CPUs".format(cpus))
 
     if workdir is not None:
         argv.extend(["--workdir", workdir])
@@ -261,7 +257,6 @@ def add_kernel(
     if tunnel_hosts:
         # This will be a list of hosts
         kernel_name.append("via_{0}".format("_".join(tunnel_hosts)))
-        # display_name.append("(via {0})".format(" ".join(tunnel_hosts)))
         argv.extend(["--tunnel-hosts"] + tunnel_hosts)
 
     if verbose:
