@@ -1,5 +1,24 @@
 ## Bodo Remote IKernel
 
+- Dependencies installation:
+
+.. code:: shell
+
+  make pip-install
+
+
+- Code tests:
+
+.. code:: shell
+
+    make tests
+
+- Building package:
+
+.. code:: shell
+
+  make build
+
 
 ## Remote IKernel
 --------------
@@ -9,7 +28,6 @@ All your Jupyter kernels, on all your machines, in one place.
 Launch Jupyter kernels on remote systems and through batch queues so that
 they can be used within a local Jupyter noteboook.
 
-.. image :: https://bitbucket.org/tdaff/remote_ikernel/raw/default/doc/kernels.png
 
 Jupyter compatible Kernels start through interactive jobs in batch queue
 systems (SGE, SLURM, PBS...) or through SSH connections. Once the kernel is

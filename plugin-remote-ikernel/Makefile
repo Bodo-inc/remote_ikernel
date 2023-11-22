@@ -21,5 +21,4 @@ build:
 
 .PHONY: tests
 tests: tests
-	$(PIP) install .
 	$(PYTEST) .

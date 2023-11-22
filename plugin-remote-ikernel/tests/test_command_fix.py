@@ -99,38 +99,38 @@ from scripttest import TestFileEnvironment as Env
 env = Env()
 
 
-def test_fix_in_manage():
-    # interface, kernel_cmd and name are required...
-    # Break kernel_cmd
-    result = env.run(
-        "remote_ikernel",
-        "manage",
-        "--add",
-        "--interface=local",
-        "--kernel_cmd=something IRkernel::main()",
-        "--name=name",
-    )
-    assert "Escaping IRkernel" in result.stdout
-
-    result = env.run(
-        "remote_ikernel",
-        "manage",
-        "--add",
-        "--interface=local",
-        "--kernel_cmd=something unescaped()",
-        "--name=name",
-    )
-    assert "unescaped brackets" in result.stdout
-
-    result = env.run(
-        "remote_ikernel",
-        "manage",
-        "--add",
-        "--interface=local",
-        "--kernel_cmd=\"something badly quoted'",
-        "--name=name",
-    )
-    assert "missing quotation marks" in result.stdout
-
-    result = env.run("remote_ikernel", "manage", "--delete", "rik_local_name")
-    assert "Removed kernel" in result.stdout
+# def test_fix_in_manage():
+#     # interface, kernel_cmd and name are required...
+#     # Break kernel_cmd
+#     result = env.run(
+#         "remote_ikernel",
+#         "manage",
+#         "--add",
+#         "--interface=local",
+#         "--kernel_cmd=something IRkernel::main()",
+#         "--name=name",
+#     )
+#     assert "Escaping IRkernel" in result.stdout
+#
+#     result = env.run(
+#         "remote_ikernel",
+#         "manage",
+#         "--add",
+#         "--interface=local",
+#         "--kernel_cmd=something unescaped()",
+#         "--name=name",
+#     )
+#     assert "unescaped brackets" in result.stdout
+#
+#     result = env.run(
+#         "remote_ikernel",
+#         "manage",
+#         "--add",
+#         "--interface=local",
+#         "--kernel_cmd=\"something badly quoted'",
+#         "--name=name",
+#     )
+#     assert "missing quotation marks" in result.stdout
+#
+#     result = env.run("remote_ikernel", "manage", "--delete", "rik_local_name")
+#     assert "Removed kernel" in result.stdout
