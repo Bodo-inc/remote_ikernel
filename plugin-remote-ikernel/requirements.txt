@@ -1,0 +1,7 @@
+notebook
+pexpect
+tornado
+build
+twine
+pytest
+scripttest

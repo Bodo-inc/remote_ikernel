@@ -1,4 +1,7 @@
-Remote IKernel
+## Bodo Remote IKernel
+
+
+## Remote IKernel
 --------------
 
 All your Jupyter kernels, on all your machines, in one place.
